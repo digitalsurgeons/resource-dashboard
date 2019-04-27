@@ -4,5 +4,8 @@
   "description": "Show Team Gantt resourcing by department",
   "main": "index.js",
   "author": "Adam Chambers",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "request": "~2.88.0"
+  }
 }
