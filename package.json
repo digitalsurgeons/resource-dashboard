@@ -1,0 +1,8 @@
+{
+  "name": "resource-dashboard",
+  "version": "0.0.0",
+  "description": "Show Team Gantt resourcing by department",
+  "main": "index.js",
+  "author": "Adam Chambers",
+  "license": "ISC"
+}
