@@ -2,6 +2,8 @@ module.exports = {
   teamgantt: {
     bearer: '',
     username: '',
-    password: ''
+    password: '',
+    company_id: 0,
+    users: []
   }
 }
