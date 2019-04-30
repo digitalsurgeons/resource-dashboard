@@ -4,6 +4,8 @@ module.exports = {
     username: '',
     password: '',
     company_id: 0,
-    users: []
+    departments: {
+      department: [{ id: 0, name: '' }]
+    }
   }
 }
