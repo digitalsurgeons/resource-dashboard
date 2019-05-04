@@ -17,14 +17,18 @@ request(
   (error, response, body) => {
     // parse auth keys
     const authData = JSON.parse(body)
+    const dates = {}
 
-    Object.keys(config.teamgantt.departments).forEach(department => {
+    // loop through departments and fetch workload for each
+    Object.keys(config.teamgantt.departments).forEach((department, i) => {
+      // create comma separated string of user ids
       const users = config.teamgantt.departments[department]
         .map(user => {
           return user.id
         })
         .join(',')
 
+      // fetch department workload
       request(
         {
           method: 'GET',
@@ -37,16 +41,80 @@ request(
           }
         },
         (error, response, body) => {
-          console.log('')
-          console.log(department)
+          // loop through each returned user
           JSON.parse(body).forEach(user => {
-            console.log(`User ${user.type_id}`)
             user.data.forEach(workload => {
-              console.log(workload.date, workload.hours_total)
+              // create empty week object
+              if (!dates[workload.date]) {
+                dates[workload.date] = {}
+              }
+
+              // scaffold department object for this week
+              if (!dates[workload.date][department]) {
+                dates[workload.date][department] = {
+                  total: 0,
+                  resourced: 0
+                }
+              }
+
+              // loop through every user in department to find user name from id
+              config.teamgantt.departments[department].every(usr => {
+                // match user on id
+                if (usr.id === user.type_id) {
+                  // add users workload for this week
+                  dates[workload.date][department][usr.name] =
+                    workload.hours_total
+
+                  // increment total workload for department
+                  dates[workload.date][department].total += workload.hours_total
+
+                  // update total workload as % of capacity (40hr pp)
+                  dates[workload.date][department].resourced =
+                    (dates[workload.date][department].total /
+                      (config.teamgantt.departments[department].length * 40)) *
+                    100
+                  return false
+                }
+
+                return true
+              })
             })
           })
+
+          if (i >= Object.keys(config.teamgantt.departments).length - 1) {
+            console.log(dates)
+          }
         }
       )
     })
   }
 )
+
+/*
+{
+  '2019-05-01': {
+    Technology: {
+      'Adam Chambers': 40,
+      'Cory Zibell': 40,
+      'Dan Poulin': 40,
+    },
+    Creative: {
+      'Joe Pilcavage': 40,
+      'Mark Myrick': 40,
+      'James Dowd': 40,
+    }
+  },
+  '2019-05-08': {
+    Technology: {
+      'Adam Chambers': 40,
+      'Cory Zibell': 40,
+      'Dan Poulin': 40,
+    },
+    Creative: {
+      'Joe Pilcavage': 40,
+      'Mark Myrick': 40,
+      'James Dowd': 40,
+    }
+  }
+}
+*/
