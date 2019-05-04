@@ -5,6 +5,12 @@
   "main": "index.js",
   "author": "Adam Chambers",
   "license": "ISC",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "fetch": "node index.js"
+  },
   "dependencies": {
     "next": "~8.1.0",
     "react": "~16.8.6",
