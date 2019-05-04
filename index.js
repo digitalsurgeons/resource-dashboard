@@ -1,5 +1,6 @@
 const config = require('./config')
 const request = require('request')
+const fs = require('fs')
 
 // authenticate with TeamGantt
 request(
@@ -81,40 +82,14 @@ request(
             })
           })
 
+          // write pretty json to file
           if (i >= Object.keys(config.teamgantt.departments).length - 1) {
-            console.log(dates)
+            fs.writeFile('./data.json', JSON.stringify(dates, null, 2), () => {
+              console.log('complete')
+            })
           }
         }
       )
     })
   }
 )
-
-/*
-{
-  '2019-05-01': {
-    Technology: {
-      'Adam Chambers': 40,
-      'Cory Zibell': 40,
-      'Dan Poulin': 40,
-    },
-    Creative: {
-      'Joe Pilcavage': 40,
-      'Mark Myrick': 40,
-      'James Dowd': 40,
-    }
-  },
-  '2019-05-08': {
-    Technology: {
-      'Adam Chambers': 40,
-      'Cory Zibell': 40,
-      'Dan Poulin': 40,
-    },
-    Creative: {
-      'Joe Pilcavage': 40,
-      'Mark Myrick': 40,
-      'James Dowd': 40,
-    }
-  }
-}
-*/
