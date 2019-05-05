@@ -1,6 +1,7 @@
 const config = require('./config')
 const request = require('request')
 const fs = require('fs')
+const dayjs = require('dayjs')
 
 // authenticate with TeamGantt
 request(
@@ -33,7 +34,11 @@ request(
       request(
         {
           method: 'GET',
-          url: `https://api.teamgantt.com/v1/workload/users?ids=${users}&group_by=week&start_date=2019-04-29&end_date=2019-05-25`,
+          url: `https://api.teamgantt.com/v1/workload/users?ids=${users}&group_by=week&start_date=${dayjs().format(
+            'YYYY-MM-DD'
+          )}&end_date=${dayjs()
+            .add(6, 'month')
+            .format('YYYY-MM-DD')}`,
           headers: {
             'Content-Type': 'application/json',
             'TG-Authorization': `Bearer ${config.teamgantt.bearer}`,
@@ -67,13 +72,16 @@ request(
                     workload.hours_total
 
                   // increment total workload for department
-                  dates[workload.date][department].total += workload.hours_total
+                  dates[workload.date][department].total += Math.ceil(
+                    workload.hours_total
+                  )
 
                   // update total workload as % of capacity (40hr pp)
-                  dates[workload.date][department].resourced =
+                  dates[workload.date][department].resourced = Math.ceil(
                     (dates[workload.date][department].total /
                       (config.teamgantt.departments[department].length * 40)) *
-                    100
+                      100
+                  )
                   return false
                 }
 
